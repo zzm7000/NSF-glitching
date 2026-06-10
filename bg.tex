@@ -5,7 +5,82 @@
 %  - Fault models (instruction skip, bit flip, data corruption) and how faults map to exploits.
 %  - Relevant hardware/SoC features and existing countermeasures.
 
+\subsection{Power Glitching}
+
+\noindent\textbf{Scope: power (voltage) glitching.}
+This proposal focuses on \emph{power (voltage) glitching}, in which the attacker briefly perturbs the supply voltage of a target to induce computational faults (e.g., instruction skips and corrupted data).
+We deliberately set aside \emph{clock glitching}, which was historically a primary fault-injection vector but is largely ineffective against contemporary microcontrollers: modern MCUs increasingly run from internal PLLs and on-chip oscillators rather than an externally supplied clock, and many integrate clock-integrity and frequency monitors, so externally injected clock glitches are filtered out or detected \TODO{cite clock-glitching countermeasures / internal-clock trend}.
+Voltage glitching, by contrast, targets the power rail directly, requires only low-cost equipment, and remains broadly effective across current embedded targets \TODO{cite recent voltage-glitching attacks}, making it the most relevant and impactful vector to study and defend.
+% TODO(glitching): briefly note EMFI/laser FI as out of scope (or future work) and why.
+
+\noindent\textbf{How power glitching works, and how we mount it.}
+A power glitch momentarily perturbs the target's supply voltage so that, for a brief window, logic gates miss their timing and the processor mis-executes: an instruction is skipped, an instruction or operand is corrupted, or a memory access returns the wrong value~\cite{oflynn2016crowbar}.
+The dominant low-cost technique is the \emph{crowbar} glitch, in which a power MOSFET briefly shorts the supply rail to ground to produce a fast, precisely timed voltage dip rather than a smoothly shaped waveform~\cite{oflynn2016crowbar}.
+We mount these attacks with the open-source ChipWhisperer platform~\cite{chipwhisperer, chipwhispererdocs}, the de facto standard for fault-injection research, which generates crowbar glitches synchronized to the target's own clock.
+A glitch is described by a small set of parameters: its \emph{width} (how long the rail is shorted), its \emph{offset} (the phase within the targeted clock cycle), an \emph{external offset} (the number of cycles after a trigger at which the glitch fires), and a \emph{repeat} count (how many consecutive cycles are glitched), with separate high-power and low-power crowbar transistors for different targets.
+Because only a small, target-specific region of this parameter space produces an exploitable fault, an attack campaign searches over these parameters and classifies each trial as normal, crash or reset, or a successful fault~\cite{chipwhispererdocs}.
+Canonical demonstrations include skipping iterations of a counting loop, bypassing password or authentication comparisons, and defeating secure-boot checks~\TODO{cite concrete examples, including our own eCTF exploits}.
+
+\begin{figure}[t]
+\centering
+\photoplaceholder[0.31\textwidth]{voltage-glitching rig: target MCU board + glitcher (e.g., ChipWhisperer)}\hfill
+\photoplaceholder[0.31\textwidth]{power-rail injection point, crowbar/MOSFET, and trigger wiring}\hfill
+\photoplaceholder[0.31\textwidth]{measurement: oscilloscope capture of the glitch and target response}
+\caption{\TODO{Replace with photos of our experimental setup for power (voltage) glitching: (left) the target and glitcher, (center) the power-rail injection and triggering, (right) the measurement/scope setup.}}
+\label{fig:setup}
+\end{figure}
+
+\subsection{A Motivating Example: Compiler Optimization Reshapes the Attack Surface}
+\label{sec:motivating}
+
+A central observation of this proposal is that the susceptibility of a security check to glitching is not a property of the source code alone, but of the machine code the compiler emits for it.
+Consider a representative security-critical decision, such as a secure-boot or authentication check \TODO{name the exact example to be shown}.
+Compiled at different optimization levels, the same source yields markedly different instruction sequences, and those differences change how many single-instruction faults suffice to bypass the check.
+Figure~\ref{fig:motivating} contrasts the same check compiled at two optimization levels.
+
+\begin{figure}[t]
+\centering
+% TODO(glitching): replace the placeholders with the real source and its compiled output
+% at two optimization levels. The lstlisting blocks below are ready to fill.
+\begin{minipage}[t]{\linewidth}
+\centering{\scriptsize\textbf{Source}}
+\begin{lstlisting}[language=C]
+// TODO(glitching): paste the C source of the security check here.
+\end{lstlisting}
+\end{minipage}
+
+\begin{minipage}[t]{0.48\linewidth}
+\centering{\scriptsize\textbf{Compiled at \texttt{-O0}}}
+\begin{lstlisting}
+; TODO(glitching): paste the -O0 disassembly of the check here.
+\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\centering{\scriptsize\textbf{Compiled at \texttt{-O2}}}
+\begin{lstlisting}
+; TODO(glitching): paste the -O2 disassembly of the check here.
+\end{lstlisting}
+\end{minipage}
+\caption{\TODO{Motivating example: one security check compiled at -O0 versus -O2. Mark the instruction(s) a single-skip glitch must hit in each version, and contrast the number of exploitable single-fault sites.}}
+\label{fig:motivating}
+\end{figure}
+
+With the two versions placed side by side, the contrast becomes concrete: \TODO{walk through which instruction a single-skip glitch must hit in each version, and state which optimization level exposes more exploitable single-fault sites}.
+This example motivates Thrust~1, which characterizes and quantifies how compiler transformations reshape the glitching attack surface, and it foreshadows Thrust~3, where we turn the same compiler into the place to reduce that surface.
+
 \section{System and Threat Models}
 
-% TODO(glitching): Define the system model (target platform, assets) and the
-% threat model (attacker capabilities, physical access assumptions, trust boundaries).
+\noindent\textbf{System model.}
+We target microcontroller-based embedded and IoT systems, representatively single-core ARM Cortex-M class devices \TODO{confirm target families/boards}, whose firmware is produced by a standard optimizing compiler toolchain (e.g., LLVM/GCC).
+The software stack includes security-critical decision points such as secure-boot signature checks, firmware-update authentication, debug/lifecycle locks, and access-control or PIN/password comparisons, as well as the cryptographic routines that protect device secrets.
+The assets to be protected are the integrity of these control-flow decisions and the confidentiality and integrity of on-device secrets (e.g., keys).
+We assume the underlying hardware behaves correctly in the absence of an induced fault; the compiler and the hardening it applies (Thrust~3) are part of the trusted computing base.
+
+\noindent\textbf{Threat model.}
+The adversary has physical or close-proximity access to the target and can mount \emph{power (voltage) glitching} (see the scope discussion above): by briefly perturbing the supply voltage, the attacker induces transient faults that we model as \emph{instruction skip}, \emph{instruction corruption}, and \emph{data corruption} affecting a bounded number of instructions/cycles per injection \TODO{state the precise fault model adopted, defined formally in Thrust~2}.
+The attacker can repeat injections and tune their timing/parameters across many attempts, and observes the device's externally visible behavior to confirm success.
+The adversary's goal is to subvert a security-critical decision, for example to skip an authentication or secure-boot check, force an unintended branch, or corrupt data to leak or alter secrets.
+\noindent\textbf{Out of scope.}
+We do not consider invasive attacks (decapsulation, focused ion beam, microprobing), purely software-only exploitation, or side-channel leakage, which are complementary and addressed by a large separate literature.
+Consistent with our scope (above), clock glitching is excluded as it is no longer effective against modern MCUs; EMFI and laser fault injection are \TODO{out of scope or future work: state which and why}.
+We make no claim of \emph{eliminating} fault-injection attacks: a determined adversary with unbounded attempts can always induce some fault. \sysname instead \emph{reduces} the exploitable attack surface and provides resistance guarantees under an explicitly \emph{bounded} fault model.

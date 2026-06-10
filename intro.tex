@@ -8,25 +8,72 @@
 
 \subsection{Proposed Research}
 
-% Arc: understand -> detect -> defend, unified by the compiler.
-% TODO(glitching): expand each into a paragraph (research question, approach, expected outcome).
+\begin{figure}[t]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+  font=\footnotesize,
+  >={Stealth[length=2.2mm]},
+  layer/.style={draw=blue!55, fill=blue!8, rounded corners, align=center, minimum width=3cm, minimum height=1.1cm},
+  glitchbox/.style={draw=orange!80!black, fill=orange!18, rounded corners, align=center, font=\scriptsize},
+  thrust/.style={draw=black!55, fill=black!4, rounded corners, align=center, minimum height=1.6cm},
+  pipe/.style={->, very thick, blue!50!black},
+  ann/.style={->, dashed, black!55},
+]
+% --- implementation layers (pipeline), spread across the full column ---
+\node[layer] (src)  at (2,0)    {Source\\code};
+\node[layer] (comp) at (7.5,0)  {\textbf{Compiler}\\[1pt]{\scriptsize optimization, instruction}\\{\scriptsize selection, reg.\ allocation}};
+\node[layer] (bin)  at (13,0)   {Binary\\on MCU};
+\draw[pipe] (src)  -- (comp);
+\draw[pipe] (comp) -- (bin);
+% --- to-be-addressed issue: fault injection ---
+\node[glitchbox] (glitch) at (13,2.1) {Fault injection\\(voltage / clock / EM / laser)};
+\draw[->, very thick, orange!80!black] (glitch) -- (bin);
+% --- thrusts in one row ---
+\node[thrust, text width=4.0cm] (t3) at (2,-2.7)   {\textbf{Thrust 3} (\mbox{\emph{Defend}})\\[2pt]{\scriptsize Cost-aware hardening + fault-aware code generation; provable resistance under a \emph{bounded} fault model}};
+\node[thrust, text width=4.0cm] (t1) at (7.5,-2.7) {\textbf{Thrust 1} (\mbox{\emph{Understand}})\\[2pt]{\scriptsize Characterize \& quantify the compiler-enlarged glitching attack surface}};
+\node[thrust, text width=4.0cm] (t2) at (13,-2.7)  {\textbf{Thrust 2} (\mbox{\emph{Detect}})\\[2pt]{\scriptsize Automatically find exploitable faults under a fault model}};
+\draw[ann] (t1.north) -- (comp.south);
+\draw[ann] (t2.north) -- (bin.south);
+% --- Thrust 3 feedback loop into the compiler ---
+\draw[->, thick, blue!60!black, rounded corners=6pt]
+  (t3.west) -- (-0.7,-2.7) -- (-0.7,1.7) -- (7.5,1.7) -- (comp.north);
+\node[blue!60!black, font=\scriptsize] at (3.0,1.95) {harden the compiler};
+\end{tikzpicture}%
+}
+\caption{Overview of \sysname. The three-thrust agenda follows an \emph{understand $\rightarrow$ detect $\rightarrow$ defend} arc unified by the compiler. To-be-addressed issues are shown in {\color{orange!85!black}orange} and implementation layers in {\color{blue!60!black}blue}: the compiler enlarges the glitching attack surface (Thrust~1), which we discover automatically (Thrust~2) and then reduce by feeding cost-aware, verifiable hardening back into the compiler (Thrust~3).}
+\label{fig:overview}
+\end{figure}
 
-\noindent\textbf{Thrust 1 --- \thrustone.}
+As shown in Figure~\ref{fig:overview}, this proposal pursues a three-thrust agenda, \sysname, that follows an \emph{understand $\rightarrow$ detect $\rightarrow$ defend} arc unified by the compiler.
+% TODO(glitching): state the overarching scientific goal in 1-2 bold sentences (cf. previous proposal), then the per-thrust paragraphs below.
+
+\noindent\textbf{Thrust 1: \thrustone.}
 % Compilers (optimization passes, instruction selection, register allocation) can introduce
 % single points of failure and enlarge the fault-injection surface. Characterize and attribute this.
 
-\noindent\textbf{Thrust 2 --- \thrusttwo.}
+\noindent\textbf{Thrust 2: \thrusttwo.}
 % A fully automated system to discover glitching vulnerabilities under a fault model.
 % Framed as defensive bug-finding.
 
-\noindent\textbf{Thrust 3 --- \thrustthree.}
+\noindent\textbf{Thrust 3: \thrustthree.}
 % Close the loop: re-engineer the compiler to reduce the surface selectively (minimal overhead)
 % and prove residual resistance under a bounded fault model. (We reduce, not eliminate -- a
 % determined attacker with enough attempts can always inject some fault.)
 
+\noindent\textbf{Novelty and relation to prior work.}
+The closest line of prior research shows that compilers can introduce \emph{software} security weaknesses.
+Optimizations may delete security-critical code such as memory-scrubbing operations~\cite{yang2017deadstore}, exploit undefined behavior to remove safety and security checks~\cite{wang2013undefined}, and more broadly open a ``correctness-security gap,'' in which a transformation that preserves functional correctness nonetheless violates a security property~\cite{dsilva2015correctness}.
+\sysname is inspired by this insight but addresses a different and, to date, unstudied problem: how compilation shapes susceptibility to \emph{physical fault injection}.
+To the best of our knowledge, no prior work characterizes, detects, or reduces the glitching attack surface that the compiler introduces, and \sysname is the first to treat the compiler as both the cause of this physical-layer exposure and the place to remedy it.
+
 \subsection{Relevance to SaTC}
 
-% TODO(glitching): Explain fit with the SaTC CORE program.
+This proposal directly serves the mission of the NSF SaTC~2.0 program (NSF~25-515), which ``aims to build trust in global cyber ecosystems'': ecosystems that, as the solicitation observes, have grown to involve ``hardware, software, networks, data, people, organizations, countries, and the physical world.''
+\sysname addresses precisely the seam between software and the physical world: physical fault-injection (glitching) attacks that violate the assumptions software, and the compilers that produce it, make about correct execution.
+The effort falls squarely within the program's \emph{Computing and Communication Systems} scope, spanning hardware security, embedded systems, and trusted execution, and it also contributes to \emph{Foundations} through the formal, bounded-fault-model resistance guarantees developed in Thrust~3.
+By characterizing (Thrust~1), automatically discovering (Thrust~2), and reducing (Thrust~3) compiler-introduced glitching vulnerabilities, \sysname strengthens the trustworthiness of the embedded and IoT devices that underpin transportation, healthcare, energy, and other critical infrastructure, advancing SaTC's goal of a resilient cyber ecosystem.
+% TODO(glitching): if pursuing the optional TTE (Transition to Education) designation, add 1-2 sentences here on the integrated education plan.
 
 \subsection{PI Qualifications}
 
@@ -35,10 +82,13 @@ The team has made significant contributions to the fields of (embedded) systems 
 His research group has been actively involved in systematically studying the security issues on MCUs.
 For instance, they analyzed the hardware and architectural limitations of MCU systems and their ability to support the implementation of modern security solutions~\cite{tan24sok}.
 Additionally, they crawled thousands of real-world MCU firmware samples to identify and analyze the security vulnerabilities present in them~\cite{nino24firware}.
-Most relevant to \sysname, the team has a sustained track record at the microarchitectural hardware--software boundary --- the same layer at which glitching operates.
+Most relevant to \sysname, the team has a sustained track record at the microarchitectural hardware/software boundary, the same layer at which glitching operates.
 Supported by an NSF CRII award on defeating cache side-channel attacks, PI Zhao designed CacheLight~\cite{gutierrez2018cachelight} and SmokeBomb~\cite{cho2020smokebomb} to mitigate cache side-channel attacks on the ARM architecture, and uncovered the Prime+Count cross-world covert channel on ARM TrustZone~\cite{cho2018prime}.
 Like fault injection, these attacks exploit physical and microarchitectural behavior rather than software bugs, giving the team direct experience with the threat model, measurement, and defenses this proposal targets.
-\textbf{PI Tan} (UCCS), an Assistant Professor at the University of Colorado Colorado Springs, brings expertise in \textbf{[TODO: embedded/hardware/fault-injection security]} and will lead \textbf{[TODO: the hardware glitching testbed and on-device validation effort (Thrust~2)]}. % TODO(glitching): confirm title/dept; add 1-2 sentences and key works~\cite{} establishing PI Tan's qualifications.
+The team also has hands-on, offensive experience with fault injection itself.
+The PIs have led teams in the MITRE Embedded Capture-the-Flag (eCTF) competition for six consecutive years, placing among the top teams \TODO{confirm years/placements and cite}.
+In these competitions, the team used \TODO{power/voltage} glitching and related fault-injection techniques to bypass secure boot, defeat firmware protections, and extract secrets from the embedded targets \TODO{add concrete examples}, giving the PIs an attacker's-eye understanding of exactly the threats \sysname sets out to characterize, find, and reduce.
+\textbf{PI Tan} (UCCS), an Assistant Professor at the University of Colorado Colorado Springs, brings expertise in \TODO{embedded/hardware/fault-injection security} and will lead \TODO{the hardware glitching testbed and on-device validation effort (Thrust~2)}. % TODO(glitching): confirm title/dept; add 1-2 sentences and key works~\cite{} establishing PI Tan's qualifications.
 PI Zhao's research has garnered several awards, including the \textbf{SACMAT Test-of-Time Award 2024}, and \textbf{distinguished paper awards} at \textbf{USENIX Security 2019}, \textbf{AsiaCCS 2022}, and \textbf{CODASPY 2014}.
 % TODO(glitching): verify award attribution now that the team changed -- the prior proposal listed these as team awards shared with Co-PI Kirda; NDSS 2011 (Kirda's EXPOSURE) has been removed.
 In terms of research community service, Lead PI Zhao co-founded the Symposium on Vehicle Security and Privacy (VehicleSec) as modern vehicles are full of MCUs.

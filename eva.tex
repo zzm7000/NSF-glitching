@@ -1,6 +1,18 @@
 \section{Evaluation Plan}
 
-% TODO(glitching): How will success be measured per thrust?
-%  - Hardware testbeds / target devices, fault-injection equipment.
-%  - Metrics (attack success rate, coverage, overhead of defenses, false positives).
-%  - Baselines and comparison points.
+We will evaluate \sysname on a testbed of real MCU targets driven by a programmable voltage-glitching rig \TODO{name targets/equipment, e.g., ChipWhisperer + STM32/nRF/ESP boards}, using both standard embedded benchmarks and real-world firmware \TODO{name benchmark suites / firmware corpus}.
+Throughout, we report \emph{relative} improvements rather than claims of elimination, consistent with our bounded-fault threat model.
+
+\noindent\textbf{Thrust 1 (Understand).}
+We will measure how the glitching attack surface changes as a function of compiler, optimization level, and target ISA, using the surface metric of Task~1.2 (e.g., the number of exploitable single-fault sites per function/binary).
+Success: demonstrating, with statistical significance, that specific compiler transformations measurably enlarge (or shrink) the surface, and that the metric correlates with vulnerabilities confirmed in Thrust~2. \TODO{set concrete targets}
+
+\noindent\textbf{Thrust 2 (Detect).}
+We will assess bug-finding \emph{effectiveness} (true-positive and false-positive rates against a ground-truth set), \emph{scalability} (analysis time and memory vs.\ binary size), and \emph{fidelity} (fraction of reported vulnerabilities reproduced on real hardware via the glitching rig).
+Baselines: manual analysis and prior fault-injection analysis tools \TODO{cite baselines}.
+Success: discovering exploitable, hardware-confirmed glitching vulnerabilities at a scale and rate beyond existing approaches. \TODO{set concrete targets}
+
+\noindent\textbf{Thrust 3 (Defend).}
+We will measure (i) the \emph{reduction} in exploitable surface after hardening, (ii) the \emph{cost} (run-time, code-size, and energy overhead), and (iii) \emph{verified residual security}, namely the bound $N$ on the number of faults the hardened binary provably resists (Task~3.3).
+Baselines: unhardened code and blanket/uniform hardening (e.g., full instruction duplication) to demonstrate that selective, vulnerability-guided hardening achieves comparable resistance at substantially lower cost.
+Success: large surface reduction with low overhead and a machine-checked resistance guarantee under the stated fault model. \TODO{set concrete overhead/reduction targets}
