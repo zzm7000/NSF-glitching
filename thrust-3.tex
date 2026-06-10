@@ -1,0 +1,38 @@
+\subsection{Thrust 3: \thrustthree}
+\label{sec:thrust3}
+
+\noindent\textbf{Problem Statement.}
+% TODO(glitching): 2-4 sentences.
+%   - Existing fault-injection countermeasures are applied blanket (2-3x overhead) or by hand.
+%   - Since the compiler creates the surface (Thrust 1) and we can locate the exploitable subset
+%     (Thrust 2), the compiler can also shrink it -- selectively, at minimal cost, with guarantees.
+%   - We reduce, not eliminate: full elimination is impossible under physical fault injection.
+%     The defensible claim is provable resistance to a BOUNDED number of faults (fault model).
+%   - Challenge: cost-optimal placement + a defensible claim of residual security.
+
+\smallskip
+\noindent\textbf{Research Questions.}
+\begin{itemize}[leftmargin=*,nosep]
+  \item \textbf{RQ3.1:} How can countermeasures be placed \emph{selectively} to reduce the exploitable surface (from Thrust~2) at minimal performance, size, and energy cost?
+  \item \textbf{RQ3.2:} Can the compiler \emph{avoid introducing} the surface during code generation, rather than patching it afterward?
+  \item \textbf{RQ3.3:} How can residual resistance be \emph{formally verified} under a bounded fault model, turning hardening into a guarantee rather than a heuristic?
+\end{itemize}
+
+\smallskip
+\noindent\textbf{Approach Overview.}
+% TODO(glitching): one paragraph tying the tasks below to the RQs above.
+
+\subsubsection{\researchthreeone}
+\noindent\textbf{Goal.} % TODO(glitching)
+\noindent\textbf{Approach.} % TODO(glitching): vulnerability-guided, cost-aware countermeasure selection/placement.
+\noindent\textbf{Expected Outcome.} % TODO(glitching)
+
+\subsubsection{\researchthreetwo}
+\noindent\textbf{Goal.} % TODO(glitching)
+\noindent\textbf{Approach.} % TODO(glitching): fault-aware instruction selection / register allocation that does not create single points of failure.
+\noindent\textbf{Expected Outcome.} % TODO(glitching)
+
+\subsubsection{\researchthreethree}
+\noindent\textbf{Goal.} % TODO(glitching)
+\noindent\textbf{Approach.} % TODO(glitching): verify the hardened binary resists N faults under the Thrust 2 fault model.
+\noindent\textbf{Expected Outcome.} % TODO(glitching)

@@ -1,0 +1,37 @@
+\section{Research Thrusts}
+
+% This \section header introduces all thrusts; thrusts 2 and 3 continue with \subsection.
+
+\subsection{Thrust 1: \thrustone}
+\label{sec:thrust1}
+
+\noindent\textbf{Problem Statement.}
+% TODO(glitching): 2-4 sentences. What is the gap?
+%   - Fault-injection defenses are reasoned about at the source/ISA level, but the binary that
+%     actually runs is produced by the compiler.
+%   - Optimization, instruction selection, register allocation, and scheduling can collapse
+%     redundant checks, create single points of failure, and otherwise enlarge the surface a
+%     glitch can exploit -- invisibly to the developer.
+%   - This compiler-introduced surface is neither characterized nor quantified today.
+
+\smallskip
+\noindent\textbf{Research Questions.}
+\begin{itemize}[leftmargin=*,nosep]
+  \item \textbf{RQ1.1:} Which compiler transformations (optimization passes, instruction selection, register allocation, scheduling) introduce or enlarge the glitching attack surface, and by how much?
+  \item \textbf{RQ1.2:} How can the glitching attack surface of compiled code be \emph{quantified} so it can be compared across compilers, optimization levels, and target ISAs?
+  \item \textbf{RQ1.3:} Do some compiler decisions \emph{reduce} the surface, revealing low-cost levers for Thrust~3?
+\end{itemize}
+
+\smallskip
+\noindent\textbf{Approach Overview.}
+% TODO(glitching): one paragraph tying the tasks below to the RQs above.
+
+\subsubsection{\researchoneone}
+\noindent\textbf{Goal.} % TODO(glitching)
+\noindent\textbf{Approach.} % TODO(glitching): differential analysis across passes / -O levels; map source-level checks to emitted instructions.
+\noindent\textbf{Expected Outcome.} % TODO(glitching)
+
+\subsubsection{\researchonetwo}
+\noindent\textbf{Goal.} % TODO(glitching)
+\noindent\textbf{Approach.} % TODO(glitching): define a surface metric (e.g., exploitable single-fault sites per function) and a measurement methodology.
+\noindent\textbf{Expected Outcome.} % TODO(glitching)

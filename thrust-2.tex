@@ -1,0 +1,36 @@
+\subsection{Thrust 2: \thrusttwo}
+\label{sec:thrust2}
+
+\noindent\textbf{Problem Statement.}
+% TODO(glitching): 2-4 sentences. Frame defensively (bug-finding), not as attack tooling.
+%   - Finding glitching vulnerabilities today is largely manual, target-specific, and slow.
+%   - Thrust 1 shows the compiler-introduced surface is large; we need to find the exploitable
+%     subset automatically, at scale, before adversaries do.
+%   - Challenge: a faithful-yet-tractable fault model, and search that scales to real binaries.
+
+\smallskip
+\noindent\textbf{Research Questions.}
+\begin{itemize}[leftmargin=*,nosep]
+  \item \textbf{RQ2.1:} What fault model(s) faithfully capture real glitching effects (instruction skip, bit flip, data corruption) on compiled embedded code while remaining tractable for automated analysis?
+  \item \textbf{RQ2.2:} How can exploitable fault-injection vulnerabilities be discovered \emph{automatically and scalably} in compiled binaries?
+  \item \textbf{RQ2.3:} How do we triage and \emph{validate} candidates to separate genuinely exploitable faults from benign ones, ideally confirming on real hardware?
+\end{itemize}
+
+\smallskip
+\noindent\textbf{Approach Overview.}
+% TODO(glitching): one paragraph tying the tasks below to the RQs above.
+
+\subsubsection{\researchtwoone}
+\noindent\textbf{Goal.} % TODO(glitching)
+\noindent\textbf{Approach.} % TODO(glitching): formalize fault model(s) and a binary-level vulnerability condition.
+\noindent\textbf{Expected Outcome.} % TODO(glitching)
+
+\subsubsection{\researchtwotwo}
+\noindent\textbf{Goal.} % TODO(glitching)
+\noindent\textbf{Approach.} % TODO(glitching): automated search -- fault simulation / symbolic execution / fuzzing under the fault model.
+\noindent\textbf{Expected Outcome.} % TODO(glitching)
+
+\subsubsection{\researchtwothree}
+\noindent\textbf{Goal.} % TODO(glitching)
+\noindent\textbf{Approach.} % TODO(glitching): exploitability triage; validation on a hardware glitching testbed.
+\noindent\textbf{Expected Outcome.} % TODO(glitching)

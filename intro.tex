@@ -1,0 +1,45 @@
+\section{Overview and Objectives}
+
+% TODO(glitching): Motivate the problem.
+%  - What systems are at risk (embedded/MCU/IoT/secure boot/TEE)?
+%  - What is fault injection / glitching (voltage, clock, EM, laser)?
+%  - Why is it dangerous and underexplored relative to software attacks?
+%  - State the overarching scientific goal of this proposal in one sentence.
+
+\subsection{Proposed Research}
+
+% Arc: understand -> detect -> defend, unified by the compiler.
+% TODO(glitching): expand each into a paragraph (research question, approach, expected outcome).
+
+\noindent\textbf{Thrust 1 --- \thrustone.}
+% Compilers (optimization passes, instruction selection, register allocation) can introduce
+% single points of failure and enlarge the fault-injection surface. Characterize and attribute this.
+
+\noindent\textbf{Thrust 2 --- \thrusttwo.}
+% A fully automated system to discover glitching vulnerabilities under a fault model.
+% Framed as defensive bug-finding.
+
+\noindent\textbf{Thrust 3 --- \thrustthree.}
+% Close the loop: re-engineer the compiler to reduce the surface selectively (minimal overhead)
+% and prove residual resistance under a bounded fault model. (We reduce, not eliminate -- a
+% determined attacker with enough attempts can always inject some fault.)
+
+\subsection{Relevance to SaTC}
+
+% TODO(glitching): Explain fit with the SaTC CORE program.
+
+\subsection{PI Qualifications}
+
+The team has made significant contributions to the fields of (embedded) systems and software security~\cite{zhang2019icore, zhao2011automatic, zhao2013using, tang2017nivanalyzer, jing2014morpheus, jing2014riskmon, jing2015towards, li2022understanding, ma2023dac, zhao24tee, wang24insect, byotee24}.
+\textbf{PI Zhao}, an Associate Professor at the Khoury College of Computer Sciences at Northeastern University, has focused extensively on embedded system security.
+His research group has been actively involved in systematically studying the security issues on MCUs.
+For instance, they analyzed the hardware and architectural limitations of MCU systems and their ability to support the implementation of modern security solutions~\cite{tan24sok}.
+Additionally, they crawled thousands of real-world MCU firmware samples to identify and analyze the security vulnerabilities present in them~\cite{nino24firware}.
+Most relevant to \sysname, the team has a sustained track record at the microarchitectural hardware--software boundary --- the same layer at which glitching operates.
+Supported by an NSF CRII award on defeating cache side-channel attacks, PI Zhao designed CacheLight~\cite{gutierrez2018cachelight} and SmokeBomb~\cite{cho2020smokebomb} to mitigate cache side-channel attacks on the ARM architecture, and uncovered the Prime+Count cross-world covert channel on ARM TrustZone~\cite{cho2018prime}.
+Like fault injection, these attacks exploit physical and microarchitectural behavior rather than software bugs, giving the team direct experience with the threat model, measurement, and defenses this proposal targets.
+\textbf{PI Tan} (UCCS), an Assistant Professor at the University of Colorado Colorado Springs, brings expertise in \textbf{[TODO: embedded/hardware/fault-injection security]} and will lead \textbf{[TODO: the hardware glitching testbed and on-device validation effort (Thrust~2)]}. % TODO(glitching): confirm title/dept; add 1-2 sentences and key works~\cite{} establishing PI Tan's qualifications.
+PI Zhao's research has garnered several awards, including the \textbf{SACMAT Test-of-Time Award 2024}, and \textbf{distinguished paper awards} at \textbf{USENIX Security 2019}, \textbf{AsiaCCS 2022}, and \textbf{CODASPY 2014}.
+% TODO(glitching): verify award attribution now that the team changed -- the prior proposal listed these as team awards shared with Co-PI Kirda; NDSS 2011 (Kirda's EXPOSURE) has been removed.
+In terms of research community service, Lead PI Zhao co-founded the Symposium on Vehicle Security and Privacy (VehicleSec) as modern vehicles are full of MCUs.
+The team also has a track record in open-sourcing prototypes~\cite{ma2023dac, zhang2018secore, cho2020smokebomb, fengformal2021, lamp2019exsol} and transitioning prototypes to patents and products~\cite{cho2020smokebomb, ahn2015methods, tu2017systems, isign}, e.g., in Samsung Tizen OS~\cite{Tizen}.

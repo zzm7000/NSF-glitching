@@ -1,0 +1,273 @@
+% NSF SaTC 2.0 proposal (NSF 25-515) -- Project Description, RES designation.
+% RES: up to $1,200,000 over up to 4 years. Project Description limit: 15 pages.
+% Optional add-on: TTE (Transition to Education) -- "SaTC 2.0: RES: TTE: <Title>".
+% Page budget (15 pages):
+%   Introduction/Overview ~2.5
+%   Background/Threat model ~2
+%   Thrust 1/2/3 ~9
+%   Broader Impacts / Timeline / Prior support ~1.5
+
+\documentclass[11pt,oneside,onecolumn,letterpaper]{article}
+%\usepackage[OT1]{fontenc}
+\usepackage{times}
+\usepackage[margin=1in]{geometry}
+%\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{latexsym}
+%\usepackage{subfigure}
+\usepackage{wrapfig}
+\usepackage{amsthm}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage[hyphens]{url}
+\usepackage{pifont}
+\usepackage{color}
+\usepackage{colortbl}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage[square, comma, sort&compress, numbers]{natbib}
+\usepackage{pgfgantt}
+\usepackage{enumitem}
+\usepackage{subcaption}
+\usepackage{titlesec}
+\usepackage{xspace}
+\usepackage{arydshln}
+\usepackage{circledsteps}
+\usepackage{listings}
+\usepackage{stfloats}
+\usepackage{comment}
+\usepackage{fmtcount}
+\usepackage{lipsum}
+\usepackage{soul}
+\usepackage[textsize=tiny]{todonotes}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{threeparttable}
+\usepackage{tcolorbox}
+\usepackage{minted}
+\usepackage{graphicx}
+
+\newcommand{\rulebox}[1]{
+	\begin{tcolorbox}[
+		%width=4in,
+		boxsep=0pt,
+		left=2pt,
+		right=2pt,
+		top=1pt,
+		bottom=1pt,
+		boxrule=0.5pt,
+		]
+		#1
+	\end{tcolorbox}
+}
+
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+		\node[shape=circle,draw,inner sep=0.7pt] (char) {#1};}}
+
+\titlespacing\section{0pt}{4pt plus 2pt minus 2pt}{6pt plus 2pt minus 2pt}
+\titlespacing\subsection{0pt}{4pt plus 2pt minus 2pt}{2pt plus 2pt minus 2pt}
+\titlespacing\subsubsection{0pt}{4pt plus 4pt minus 2pt}{2pt plus 2pt minus 2pt}
+
+\titleformat{\section}
+{\fontsize{12}{15}\bfseries}{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\fontsize{11}{15}\bfseries}{\thesubsection}{1em}{}
+
+% Inline review/comment macro (highlighted). Wrap notes you do NOT want in the final PDF.
+\newcommand{\ziming}[1]{%
+  \begingroup
+  \definecolor{hlcolor}{RGB}{20, 255, 20}\sethlcolor{hlcolor}%
+  \textcolor{black}{\hl{\textit{\textbf{Ziming:} #1}}}%
+  \endgroup
+}
+
+% ---------------------------------------------------------------------------
+% TODO(glitching): name the system(s) / artifacts this proposal introduces.
+% These are placeholders carried over from the template -- rename or remove.
+% ---------------------------------------------------------------------------
+\newcommand{\sysname}{{\scshape Forge}\xspace}
+\newcommand{\ctfplatform}{\textsc{PwnIoT.Academy}\xspace}
+
+% Thrust titles. Arc: understand (T1) -> detect (T2) -> defend (T3), unified by the compiler.
+% Refine wording as the proposal matures.
+\newcommand{\thrustone}{Characterizing the Compiler-Enlarged Glitching Attack Surface}
+\newcommand{\researchoneone}{Task 1.1: Attributing Fault-Injection Surface to Compiler Transformations}
+\newcommand{\researchonetwo}{Task 1.2: A Metric to Quantify the Glitching Attack Surface of Compiled Code}
+
+\newcommand{\thrusttwo}{Automated Discovery of Compiler-Induced Glitching Vulnerabilities}
+\newcommand{\researchtwoone}{Task 2.1: A Fault Model and Vulnerability Analysis Framework}
+\newcommand{\researchtwotwo}{Task 2.2: Automated, Scalable Glitching Bug Finding}
+\newcommand{\researchtwothree}{Task 2.3: Exploitability Triage and Validation}
+
+\newcommand{\thrustthree}{Automated, Cost-Aware Compiler Hardening with Fault-Resistance Guarantees}
+\newcommand{\researchthreeone}{Task 3.1: Selective, Cost-Optimal Countermeasure Placement}
+\newcommand{\researchthreetwo}{Task 3.2: Fault-Aware Code Generation to Avoid Introducing Surface}
+\newcommand{\researchthreethree}{Task 3.3: Verifying Residual Security Under a Bounded Fault Model}
+
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\pgfkeys{/csteps/inner xsep=1.5pt}
+\pgfkeys{/csteps/inner ysep=1.5pt}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\tiny,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=none,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2,
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1}
+}
+
+\newcounter{goal}
+\newcommand{\goal}[1]{
+  \stepcounter{goal}
+  \textbf{G\padzeroes[1]\decimal{goal}. #1}
+}
+
+\lstset{style=mystyle}
+
+\graphicspath{{./figs/}}
+
+\begin{document}
+
+\pagenumbering{gobble}
+
+\begin{center}
+{\large{\bf
+% Separate collaborative submission (NEU lead Zhao + UCCS lead Tan). Both linked proposals carry
+% the identical title with the "Collaborative Research:" prefix (NSF 25-515, RES designation).
+Collaborative Research: SaTC 2.0: RES: \sysname: Characterizing, Finding, and Reducing Compiler-Introduced Glitching Vulnerabilities}}
+\end{center}
+
+\input{intro}
+
+\input{prior.tex}
+
+\input{bg.tex}
+
+\input{thrust-1.tex}
+
+\input{thrust-2.tex}
+
+\input{thrust-3.tex}
+
+\input{eva.tex}
+
+\input{bi.tex}
+
+\section{Proposed Project Timeline}
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+	\vspace{-1cm}
+	\definecolor{barblue}{RGB}{153,204,254}
+	\definecolor{groupblue}{RGB}{51,102,254}
+	\definecolor{linkred}{RGB}{165,0,33}
+	\centering
+	\begin{ganttchart}%
+		[canvas/.style={fill=none, draw=black!84, line width=.35pt},
+		hgrid style/.style={draw=black!84, line width=.75pt},
+		vgrid={{*3{draw=black!32, line width=.75pt},*1{draw=black!84, line width=.75pt}}},
+		title/.style={draw=none, fill=none},
+		title label font=\footnotesize,
+		title label anchor/.style={below=-1.5ex},
+		include title in canvas=false,
+		bar label font=\footnotesize\color{black!84},
+		bar label anchor/.style={left=0cm},
+		bar height=0.3,
+		bar/.style={draw=none, fill=black!63},
+		bar incomplete/.style={fill=barblue},
+		milestone progress label font=\footnotesize\color{black!70},
+		group incomplete/.style={fill=groupblue},
+		group left shift=0,
+		group right shift=0,
+		group height=.3,
+		group label font=\bfseries\footnotesize,
+		group label anchor/.style={left=0cm},
+		link/.style={-latex, line width=1.pt, linkred},
+		link label font=\footnotesize\bfseries\color{linkred}\MakeUppercase,
+		link label anchor/.style={below left=-1.0ex and 0},
+		x unit=0.42cm, y unit title=.35cm, y unit chart=0.3cm
+		]{1}{12}
+		\gantttitle{Year 1}{4}
+		\gantttitle{Year 2}{4}
+		\gantttitle{Year 3}{4}\\
+		\ganttgroup[]%
+		{\textbf{Thrust 1}}{1}{5} \\
+		\ganttbar[]{Task 1.1}{1}{3} \\
+		\ganttbar[]{Task 1.2}{3}{5} \\
+		[grid]
+		\ganttgroup[]%
+		{\textbf{Thrust 2}}{5}{9} \\
+		\ganttbar[]{Task 2.1}{5}{6} \\
+		\ganttbar[]{Task 2.2}{6}{8} \\
+		\ganttbar[]{Task 2.3}{7}{9}\\
+		[grid]
+		\ganttgroup[]%
+		{\textbf{Thrust 3}}{9}{12} \\
+		\ganttbar[]{Task 3.1}{9}{10} \\
+		\ganttbar[]{Task 3.2}{10}{11} \\
+		\ganttbar[]{Task 3.3}{11}{12}
+	\end{ganttchart}
+	\vspace{-0.4cm}
+	\caption{Proposed project timeline}
+	\label{fig:timeline}
+	\vspace{-2pt}
+\end{wrapfigure}
+Figure~\ref{fig:timeline} provides a Gantt chart for the tasks outlined in this proposal.
+% TODO(glitching): describe the timeline narrative (thrust overlap, CTF, mentoring, etc.)
+
+\section{Results from Prior NSF Support}
+
+% TODO(glitching): update each entry (award #, amount, period, IM/BI, one outcome with citation).
+% Each PI must report prior support (or state they have none). In a separate collaborative
+% submission, each institution's PI reports their own prior support in their own proposal.
+PI Zhao (NEU): \emph{``CAREER: SaTC: Rethinking Trusted Execution Environments for Embedded and IoT Systems"} (CNS-2237238, \$564,748, 2/2023 - 1/2028).
+\ul{Intellectual Merit:} TODO.
+\ul{Broader Impacts:} TODO.
+\ul{Research Outcome:} TODO (add citation).
+
+PI Tan (UCCS): % TODO(glitching): list PI Xi Tan's prior/current NSF support (award #, amount, period, IM/BI, one outcome with citation). If she has received no prior NSF support, state: "PI Tan has not received prior NSF support."
+
+\newpage
+\bibliographystyle{ieeetr}
+\bibliography{bib, MyPub}
+\end{document}
