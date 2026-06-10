@@ -21,12 +21,32 @@ A glitch is described by a small set of parameters: its \emph{width} (how long t
 Because only a small, target-specific region of this parameter space produces an exploitable fault, an attack campaign searches over these parameters and classifies each trial as normal, crash or reset, or a successful fault~\cite{chipwhispererdocs}.
 Canonical demonstrations include skipping iterations of a counting loop, bypassing password or authentication comparisons, and defeating secure-boot checks~\TODO{cite concrete examples, including our own eCTF exploits}.
 
+\noindent\textbf{The PIs' fault-injection testbed.}
+The PIs maintain a laboratory equipped for power glitching and fault-injection research, shown in Figure~\ref{fig:setup}.
+It includes embedded targets such as the Microchip ATmega328P Xplained board, mounted on an optical bench that enables precise and repeatable positioning of injection and measurement probes, together with a Tektronix RSA607A real-time spectrum analyzer for characterizing the device's power and electromagnetic behavior during fault injection.
+The testbed also includes \TODO{list the ChipWhisperer glitcher(s) and any other targets/equipment the PIs have}.
+
 \begin{figure}[t]
 \centering
-\photoplaceholder[0.31\textwidth]{voltage-glitching rig: target MCU board + glitcher (e.g., ChipWhisperer)}\hfill
-\photoplaceholder[0.31\textwidth]{power-rail injection point, crowbar/MOSFET, and trigger wiring}\hfill
-\photoplaceholder[0.31\textwidth]{measurement: oscilloscope capture of the glitch and target response}
-\caption{\TODO{Replace with photos of our experimental setup for power (voltage) glitching: (left) the target and glitcher, (center) the power-rail injection and triggering, (right) the measurement/scope setup.}}
+\begin{subfigure}[b]{0.32\textwidth}
+  \centering
+  \includegraphics[height=4.2cm]{PXL_20251205_153425399.jpg}
+  \caption{Embedded device under test (Microchip ATmega328P Xplained) on an optical bench.}
+  \label{fig:setup-dut}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.32\textwidth}
+  \centering
+  \includegraphics[height=4.2cm]{PXL_20251205_154238638.jpg}
+  \caption{Tektronix RSA607A real-time spectrum analyzer.}
+  \label{fig:setup-rsa}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.32\textwidth}
+  \centering
+  \photoplaceholder[\textwidth]{ChipWhisperer glitcher / crowbar injection rig}
+  \caption{Glitcher (photo to be added).}
+  \label{fig:setup-glitcher}
+\end{subfigure}
+\caption{Representative equipment in the PIs' fault-injection testbed: (\subref{fig:setup-dut}) an embedded device under test, a Microchip ATmega328P Xplained board mounted on an optical bench for precise probe positioning; (\subref{fig:setup-rsa}) a Tektronix RSA607A real-time spectrum analyzer; and (\subref{fig:setup-glitcher}) \TODO{the ChipWhisperer glitcher / crowbar injection rig (photo to be added)}.}
 \label{fig:setup}
 \end{figure}
 
