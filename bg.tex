@@ -9,7 +9,7 @@
 
 \noindent\textbf{Scope: power (voltage) glitching.}
 This proposal focuses on \emph{power (voltage) glitching}, in which the attacker briefly perturbs the supply voltage of a target to induce computational faults (e.g., instruction skips and corrupted data).
-We deliberately set aside \emph{clock glitching}, which was historically a primary fault-injection vector but is largely ineffective against contemporary microcontrollers: modern MCUs increasingly run from internal PLLs and on-chip oscillators rather than an externally supplied clock, and many integrate clock-integrity and frequency monitors, so externally injected clock glitches are filtered out or detected \TODO{cite clock-glitching countermeasures / internal-clock trend}.
+We deliberately set aside \emph{clock glitching}, which was historically a primary fault-injection vector but is largely ineffective against contemporary embedded systems: modern embedded devices increasingly run from internal PLLs and on-chip oscillators rather than an externally supplied clock, and many integrate clock-integrity and frequency monitors, so externally injected clock glitches are filtered out or detected \TODO{cite clock-glitching countermeasures / internal-clock trend}.
 Voltage glitching, by contrast, targets the power rail directly, requires only low-cost equipment, and remains broadly effective across current embedded targets \TODO{cite recent voltage-glitching attacks}, making it the most relevant and impactful vector to study and defend.
 % TODO(glitching): briefly note EMFI/laser FI as out of scope (or future work) and why.
 
@@ -21,32 +21,36 @@ A glitch is described by a small set of parameters: its \emph{width} (how long t
 Because only a small, target-specific region of this parameter space produces an exploitable fault, an attack campaign searches over these parameters and classifies each trial as normal, crash or reset, or a successful fault~\cite{chipwhispererdocs}.
 Canonical demonstrations include skipping iterations of a counting loop, bypassing password or authentication comparisons, and defeating secure-boot checks~\TODO{cite concrete examples, including our own eCTF exploits}.
 
-\noindent\textbf{The PIs' fault-injection testbed.}
-The PIs maintain a laboratory equipped for power glitching and fault-injection research, shown in Figure~\ref{fig:setup}.
-It includes embedded targets such as the Microchip ATmega328P Xplained board, mounted on an optical bench that enables precise and repeatable positioning of injection and measurement probes, together with a Tektronix RSA607A real-time spectrum analyzer for characterizing the device's power and electromagnetic behavior during fault injection.
-The testbed also includes \TODO{list the ChipWhisperer glitcher(s) and any other targets/equipment the PIs have}.
+\noindent\textbf{The PIs' fault-injection testbeds.}
+Each PI maintains an independent fault-injection laboratory at their own institution, so the project has fully equipped glitching capability at both Northeastern (PI Zhao) and the University of Colorado Colorado Springs (PI Tan); the two setups also let the PIs cross-validate findings on separate hardware.
+PI Zhao's testbed at Northeastern, shown in Figure~\ref{fig:setup}, includes embedded targets such as the Microchip ATmega328P Xplained board, mounted on an optical bench that enables precise and repeatable positioning of injection and measurement probes, together with a Tektronix RSA607A real-time spectrum analyzer for characterizing the device's power and electromagnetic behavior during fault injection.
+PI Tan's testbed at UCCS is similarly equipped for power glitching and fault-injection research, with \TODO{list PI Tan's UCCS targets/equipment (glitcher, scope, target boards)}.
+Both testbeds include \TODO{list the ChipWhisperer glitcher(s) and any other shared targets/equipment the PIs have}.
 
+% Photos are portrait (AR ~0.75); fixing a common height keeps all three panels the
+% same size, and [t] alignment keeps a longer caption from shifting the images.
 \begin{figure}[t]
 \centering
-\begin{subfigure}[b]{0.32\textwidth}
+\begin{subfigure}[t]{0.32\textwidth}
   \centering
-  \includegraphics[height=4.2cm]{PXL_20251205_153425399.jpg}
+  \includegraphics[height=4.5cm]{PXL_20251205_153425399.jpg}
   \caption{Embedded device under test (Microchip ATmega328P Xplained) on an optical bench.}
   \label{fig:setup-dut}
 \end{subfigure}\hfill
-\begin{subfigure}[b]{0.32\textwidth}
+\begin{subfigure}[t]{0.32\textwidth}
   \centering
-  \includegraphics[height=4.2cm]{PXL_20251205_154238638.jpg}
+  \includegraphics[height=4.5cm]{PXL_20251205_154238638.jpg}
   \caption{Tektronix RSA607A real-time spectrum analyzer.}
   \label{fig:setup-rsa}
 \end{subfigure}\hfill
-\begin{subfigure}[b]{0.32\textwidth}
+\begin{subfigure}[t]{0.32\textwidth}
   \centering
-  \photoplaceholder[\textwidth]{ChipWhisperer glitcher / crowbar injection rig}
+  \setlength{\phheight}{4.5cm}% match the photo height; auto-resets at end of this subfigure
+  \photoplaceholder[3.4cm]{ChipWhisperer glitcher / crowbar injection rig}
   \caption{Glitcher (photo to be added).}
   \label{fig:setup-glitcher}
 \end{subfigure}
-\caption{Representative equipment in the PIs' fault-injection testbed: (\subref{fig:setup-dut}) an embedded device under test, a Microchip ATmega328P Xplained board mounted on an optical bench for precise probe positioning; (\subref{fig:setup-rsa}) a Tektronix RSA607A real-time spectrum analyzer; and (\subref{fig:setup-glitcher}) \TODO{the ChipWhisperer glitcher / crowbar injection rig (photo to be added)}.}
+\caption{Representative equipment in the PIs' fault-injection testbeds, maintained independently at both Northeastern and UCCS: (\subref{fig:setup-dut}) an embedded device under test, a Microchip ATmega328P Xplained board mounted on an optical bench for precise probe positioning; (\subref{fig:setup-rsa}) a Tektronix RSA607A real-time spectrum analyzer; and (\subref{fig:setup-glitcher}) \TODO{the ChipWhisperer glitcher / crowbar injection rig (photo to be added)}.}
 \label{fig:setup}
 \end{figure}
 
@@ -91,7 +95,7 @@ This example motivates Thrust~1, which characterizes and quantifies how compiler
 \section{System and Threat Models}
 
 \noindent\textbf{System model.}
-We target microcontroller-based embedded and IoT systems, representatively single-core ARM Cortex-M class devices \TODO{confirm target families/boards}, whose firmware is produced by a standard optimizing compiler toolchain (e.g., LLVM/GCC).
+We target embedded and IoT systems, representatively single-core ARM Cortex-M class devices \TODO{confirm target families/boards}, whose firmware is produced by a standard optimizing compiler toolchain (e.g., LLVM/GCC).
 The software stack includes security-critical decision points such as secure-boot signature checks, firmware-update authentication, debug/lifecycle locks, and access-control or PIN/password comparisons, as well as the cryptographic routines that protect device secrets.
 The assets to be protected are the integrity of these control-flow decisions and the confidentiality and integrity of on-device secrets (e.g., keys).
 We assume the underlying hardware behaves correctly in the absence of an induced fault; the compiler and the hardening it applies (Thrust~3) are part of the trusted computing base.
@@ -102,5 +106,5 @@ The attacker can repeat injections and tune their timing/parameters across many 
 The adversary's goal is to subvert a security-critical decision, for example to skip an authentication or secure-boot check, force an unintended branch, or corrupt data to leak or alter secrets.
 \noindent\textbf{Out of scope.}
 We do not consider invasive attacks (decapsulation, focused ion beam, microprobing), purely software-only exploitation, or side-channel leakage, which are complementary and addressed by a large separate literature.
-Consistent with our scope (above), clock glitching is excluded as it is no longer effective against modern MCUs; EMFI and laser fault injection are \TODO{out of scope or future work: state which and why}.
+Consistent with our scope (above), clock glitching is excluded as it is no longer effective against modern embedded systems; EMFI and laser fault injection are \TODO{out of scope or future work: state which and why}.
 We make no claim of \emph{eliminating} fault-injection attacks: a determined adversary with unbounded attempts can always induce some fault. \sysname instead \emph{reduces} the exploitable attack surface and provides resistance guarantees under an explicitly \emph{bounded} fault model.

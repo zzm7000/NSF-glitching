@@ -1,6 +1,16 @@
 % NSF SaTC 2.0 proposal (NSF 25-515) -- Project Description, RES designation.
 % RES: up to $1,200,000 over up to 4 years. Project Description limit: 15 pages.
 % Optional add-on: TTE (Transition to Education) -- "SaTC 2.0: RES: TTE: <Title>".
+%
+% SUBMISSION TARGET DATES (NSF 25-515; these are TARGET dates, not hard deadlines:
+%   proposals are accepted anytime, but late ones may miss a review panel):
+%   - Last Monday in September, annually (first instance was Sep 29, 2025).
+%   - Last Monday in January, annually  (first instance was Jan 26, 2026).
+%   Next applicable target dates after June 2026: Mon Sep 28, 2026; Mon Jan 25, 2027.
+%   Separate collaborative: NEU (Zhao, lead) + UCCS (Tan) must each submit and link
+%   their proposals before the same panel cutoff. Verify against the live solicitation
+%   and each institution's internal sponsored-programs deadline before relying on these.
+%   Source: https://www.nsf.gov/funding/opportunities/satc-20-security-privacy-trust-cyberspace/nsf25-515/solicitation
 % Page budget (15 pages):
 %   Introduction/Overview ~2.5
 %   Background/Threat model ~2
@@ -90,9 +100,11 @@
 \newcommand{\TODO}[1]{\textcolor{todored}{\textbf{[TODO: #1]}}}
 
 % Placeholder for a not-yet-available photo/figure: a red-framed gray box with a label.
-% Usage: \photoplaceholder[width]{description}
+% Usage: \photoplaceholder[width]{description}. Box height is \phheight (default 2.6cm);
+% set \phheight locally (e.g. inside a subfigure, where it auto-resets) to match a photo.
+\newlength{\phheight}\setlength{\phheight}{2.6cm}
 \newcommand{\photoplaceholder}[2][0.3\textwidth]{%
-  \fcolorbox{red}{gray!12}{\parbox[c][2.6cm][c]{#1}{\centering\footnotesize\textcolor{red}{\textbf{[PHOTO: #2]}}}}%
+  \fcolorbox{red}{gray!12}{\parbox[b][\phheight][c]{#1}{\centering\footnotesize\textcolor{red}{\textbf{[PHOTO: #2]}}}}%
 }
 
 % ---------------------------------------------------------------------------

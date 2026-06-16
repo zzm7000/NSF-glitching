@@ -1,7 +1,7 @@
 DOC ?= ProjectDescription.tex
 #$(DOC).tex
 DIFF ?= HEAD^
-PDFLATEX = pdflatex -shell-escape
+PDFLATEX = pdflatex -shell-escape --synctex=1
 BIBTEX = bibtex
 RERUN = "(There were undefined (references|citations)|Rerun to get (cross-references|the bars) right)"
 RERUNBIB = "No file.*\.bbl|Citation.*undefined"
