@@ -1,3 +1,4 @@
+% !TEX root = ProjectDescription.tex
 \section{Overview and Objectives}
 
 % TODO(glitching): Motivate the problem.
@@ -62,16 +63,15 @@ As shown in Figure~\ref{fig:overview}, this proposal pursues a three-thrust agen
 % determined attacker with enough attempts can always inject some fault.)
 
 \noindent\textbf{Novelty and relation to prior work.}
-The closest line of prior research shows that compilers can introduce \emph{software} security weaknesses.
-Optimizations may delete security-critical code such as memory-scrubbing operations~\cite{yang2017deadstore}, exploit undefined behavior to remove safety and security checks~\cite{wang2013undefined}, and more broadly open a ``correctness-security gap,'' in which a transformation that preserves functional correctness nonetheless violates a security property~\cite{dsilva2015correctness}.
-Our own recent work makes this concrete: in a study of real microcontroller security designs from the MITRE embedded CTF competition, we found that compiler optimizations silently removed \texttt{memset} calls intended to scrub AES keys from the stack, leaving sensitive data recoverable after it was meant to be erased~\cite{ma2025ectf}.
-\sysname is inspired by this insight but addresses a different and, to date, unstudied problem: how compilation shapes susceptibility to \emph{physical fault injection}.
-To the best of our knowledge, no prior work characterizes, detects, or reduces the glitching attack surface that the compiler introduces, and \sysname is the first to treat the compiler as both the cause of this physical-layer exposure and the place to remedy it.
+\textbf{Our key observation is that the compiler shapes a system's exposure to \emph{physical} fault injection in the same way it is known to shape its exposure to \emph{software} security bugs, yet only the software side has been studied.}
+A closely related line of prior research shows that compilers can introduce software security weaknesses: optimizations delete memory-scrubbing operations~\cite{yang2017deadstore}, exploit undefined behavior to remove safety and security checks~\cite{wang2013undefined}, and more broadly open a ``correctness-security gap'' in which a transformation that preserves functional correctness nonetheless violates a security property~\cite{dsilva2015correctness}; a recent systematic study finds these compiler-introduced security bugs widespread across modern toolchains and optimization passes~\cite{xu2023silent}.
+Our own work in the MITRE embedded CTF competition makes the pattern concrete: compiler optimizations silently removed \texttt{memset} calls intended to scrub AES keys from the stack, leaving sensitive data recoverable after it was meant to be erased~\cite{ma2025ectf}.
+\sysname carries the same observation to physical fault injection: to our knowledge, no prior work characterizes, detects, or reduces the glitching attack surface that the compiler introduces, and \sysname is the first to treat the compiler as both the cause and the remedy of this physical-layer exposure.
 
 \subsection{Relevance to SaTC}
 
 This proposal directly serves the mission of the NSF SaTC~2.0 program (NSF~25-515), which ``aims to build trust in global cyber ecosystems'': ecosystems that, as the solicitation observes, have grown to involve ``hardware, software, networks, data, people, organizations, countries, and the physical world.''
-\sysname addresses precisely the seam between software and the physical world: physical fault-injection (glitching) attacks that violate the assumptions software, and the compilers that produce it, make about correct execution.
+\sysname addresses the seam between software and the physical world: fault-injection (glitching) attacks that violate the assumptions software, and the compilers that produce it, make about correct execution.
 The effort falls squarely within the program's \emph{Computing and Communication Systems} scope, spanning hardware security, embedded systems, and trusted execution, and it also contributes to \emph{Foundations} through the formal, bounded-fault-model resistance guarantees developed in Thrust~3.
 By characterizing (Thrust~1), automatically discovering (Thrust~2), and reducing (Thrust~3) compiler-introduced glitching vulnerabilities, \sysname strengthens the trustworthiness of the embedded and IoT devices that underpin transportation, healthcare, energy, and other critical infrastructure, advancing SaTC's goal of a resilient cyber ecosystem.
 % TODO(glitching): if pursuing the optional TTE (Transition to Education) designation, add 1-2 sentences here on the integrated education plan.
@@ -93,6 +93,6 @@ Her work in this area includes a comprehensive bottom-up study of Arm Cortex-M s
 PI Tan will lead the hardware glitching testbed and on-device validation effort (Thrust~2). % TODO(glitching): confirm title/dept; add fault-injection-specific works if available.
 
 \noindent\textbf{Joint efforts.}
-The PIs have a sustained record of working together on embedded control-flow security, including attack-and-defense studies of return-to-non-secure and cross-state control-flow hijacking on Cortex-M TrustZone~\cite{ma2023dac, ma2025microft} and debugger-based asynchronous control-flow integrity for embedded systems~\cite{wang24insect}, giving them deep, shared familiarity with exactly the compiler and the hardware/software boundary that glitching subverts.
+The PIs have a sustained record of working together on embedded control-flow security, including attack-and-defense studies of return-to-non-secure and cross-state control-flow hijacking on Cortex-M TrustZone~\cite{ma2023dac, ma2025microft} and debugger-based asynchronous control-flow integrity for embedded systems~\cite{wang24insect}, giving them shared familiarity with the compiler and hardware/software boundary that glitching subverts.
 Most relevant to \sysname, the PIs have jointly led teams in the MITRE Embedded Capture-the-Flag (eCTF) competition for six consecutive years and have published studies distilling its security lessons~\cite{ma2025ectf, ma2026wejust}, placing among the top teams \TODO{confirm years/placements}.
-In these competitions, the team used power/voltage glitching and related fault-injection techniques to bypass secure boot, defeat firmware protections, and extract secrets from the embedded targets \TODO{add concrete examples}, giving the PIs an attacker's-eye understanding of exactly the threats \sysname sets out to characterize, find, and reduce.
+In these competitions, the team used power/voltage glitching and related fault-injection techniques to bypass secure boot, defeat firmware protections, and extract secrets from the embedded targets \TODO{add concrete examples}, giving the PIs an attacker's-eye view of the threats \sysname sets out to characterize, find, and reduce.

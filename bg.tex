@@ -1,4 +1,5 @@
-\section{Background}
+% !TEX root = ProjectDescription.tex
+\section{Background, Testbed, and Motivating Example}
 
 % TODO(glitching): Provide the technical background a reviewer needs.
 %  - Fault injection mechanisms: voltage/clock glitching, EMFI, laser FI, Rowhammer-adjacent.
@@ -9,28 +10,35 @@
 
 \noindent\textbf{Scope: power (voltage) glitching.}
 This proposal focuses on \emph{power (voltage) glitching}, in which the attacker briefly perturbs the supply voltage of a target to induce computational faults (e.g., instruction skips and corrupted data).
-We deliberately set aside \emph{clock glitching}, which was historically a primary fault-injection vector but is largely ineffective against contemporary embedded systems: modern embedded devices increasingly run from internal PLLs and on-chip oscillators rather than an externally supplied clock, and many integrate clock-integrity and frequency monitors, so externally injected clock glitches are filtered out or detected \TODO{cite clock-glitching countermeasures / internal-clock trend}.
-Voltage glitching, by contrast, targets the power rail directly, requires only low-cost equipment, and remains broadly effective across current embedded targets \TODO{cite recent voltage-glitching attacks}, making it the most relevant and impactful vector to study and defend.
+We deliberately set aside \emph{clock glitching}, which was historically a primary fault-injection vector but is largely ineffective against contemporary embedded systems: modern embedded devices increasingly run from internal PLLs and on-chip oscillators rather than an externally supplied clock, and many integrate clock-integrity and frequency monitors, so externally injected clock glitches are filtered out or detected~\cite{selmke2019peak, balasch2011depth}.
+Voltage glitching, by contrast, targets the power rail directly, requires only low-cost equipment, and remains effective on current embedded targets~\cite{sass2023multi, ruminot2023novel}, so it is the vector we study and defend against.
 % TODO(glitching): briefly note EMFI/laser FI as out of scope (or future work) and why.
 
 \noindent\textbf{How power glitching works, and how we mount it.}
 A power glitch momentarily perturbs the target's supply voltage so that, for a brief window, logic gates miss their timing and the processor mis-executes: an instruction is skipped, an instruction or operand is corrupted, or a memory access returns the wrong value~\cite{oflynn2016crowbar}.
 The dominant low-cost technique is the \emph{crowbar} glitch, in which a power MOSFET briefly shorts the supply rail to ground to produce a fast, precisely timed voltage dip rather than a smoothly shaped waveform~\cite{oflynn2016crowbar}.
-We mount these attacks with the open-source ChipWhisperer platform~\cite{chipwhisperer, chipwhispererdocs}, the de facto standard for fault-injection research, which generates crowbar glitches synchronized to the target's own clock.
+We mount these attacks with the open-source ChipWhisperer platform~\cite{chipwhisperer, chipwhispererdocs}, which generates crowbar glitches synchronized to the target's own clock.
 A glitch is described by a small set of parameters: its \emph{width} (how long the rail is shorted), its \emph{offset} (the phase within the targeted clock cycle), an \emph{external offset} (the number of cycles after a trigger at which the glitch fires), and a \emph{repeat} count (how many consecutive cycles are glitched), with separate high-power and low-power crowbar transistors for different targets.
-Because only a small, target-specific region of this parameter space produces an exploitable fault, an attack campaign searches over these parameters and classifies each trial as normal, crash or reset, or a successful fault~\cite{chipwhispererdocs}.
-Canonical demonstrations include skipping iterations of a counting loop, bypassing password or authentication comparisons, and defeating secure-boot checks~\TODO{cite concrete examples, including our own eCTF exploits}.
+Because only a small, target-specific region of this parameter space produces an exploitable fault, an attack campaign searches over these parameters and classifies each trial as normal, crash or reset, or a successful fault~\cite{chipwhispererdocs, carpi2014glitch}.
+Published attacks include skipping iterations of counting loops, bypassing password and authentication comparisons, defeating secure-boot checks~\cite{timmers2016bypassing}, hijacking the program counter on ARM via fault injection~\cite{timmers2016controlling}, and bypassing the glitching protections of commercial ARM TrustZone-M devices~\cite{sass2023multi}; the PIs' MITRE eCTF entries used the same techniques to recover secrets and bypass secure boot on the target firmware~\cite{ma2025ectf, ma2026wejust}.
 
-\noindent\textbf{The PIs' fault-injection testbeds.}
-Each PI maintains an independent fault-injection laboratory at their own institution, so the project has fully equipped glitching capability at both Northeastern (PI Zhao) and the University of Colorado Colorado Springs (PI Tan); the two setups also let the PIs cross-validate findings on separate hardware.
-PI Zhao's testbed at Northeastern, shown in Figure~\ref{fig:setup}, includes embedded targets such as the Microchip ATmega328P Xplained board, mounted on an optical bench that enables precise and repeatable positioning of injection and measurement probes, together with a Tektronix RSA607A real-time spectrum analyzer for characterizing the device's power and electromagnetic behavior during fault injection.
-PI Tan's testbed at UCCS is similarly equipped for power glitching and fault-injection research, with \TODO{list PI Tan's UCCS targets/equipment (glitcher, scope, target boards)}.
-Both testbeds include \TODO{list the ChipWhisperer glitcher(s) and any other shared targets/equipment the PIs have}.
+\subsection{PIs' Fault-Injection Testbeds}
+\label{sec:testbeds}
+
+Both PIs maintain fault-injection laboratories at their home institutions (Northeastern for PI Zhao; the University of Colorado Colorado Springs for PI Tan), giving the project glitching capability at two sites and letting the PIs cross-validate findings on separate hardware.
+The testbeds (Figure~\ref{fig:setup}) cover what a glitching campaign needs: embedded targets such as the Microchip ATmega328P Xplained on an optical bench for precise probe positioning, a Tektronix RSA607A real-time spectrum analyzer for power- and EM-side characterization, and ChipWhisperer glitchers for synchronized crowbar voltage perturbation.
 
 % Photos are portrait (AR ~0.75); fixing a common height keeps all three panels the
 % same size, and [t] alignment keeps a longer caption from shifting the images.
 \begin{figure}[t]
 \centering
+\begin{subfigure}[t]{0.32\textwidth}
+  \centering
+  \setlength{\phheight}{4.5cm}% match the photo height; auto-resets at end of this subfigure
+  \photoplaceholder[3.4cm]{ChipWhisperer glitcher / crowbar injection rig}
+  \caption{Glitcher (photo to be added).}
+  \label{fig:setup-glitcher}
+\end{subfigure}\hfill
 \begin{subfigure}[t]{0.32\textwidth}
   \centering
   \includegraphics[height=4.5cm]{PXL_20251205_153425399.jpg}
@@ -42,31 +50,24 @@ Both testbeds include \TODO{list the ChipWhisperer glitcher(s) and any other sha
   \includegraphics[height=4.5cm]{PXL_20251205_154238638.jpg}
   \caption{Tektronix RSA607A real-time spectrum analyzer.}
   \label{fig:setup-rsa}
-\end{subfigure}\hfill
-\begin{subfigure}[t]{0.32\textwidth}
-  \centering
-  \setlength{\phheight}{4.5cm}% match the photo height; auto-resets at end of this subfigure
-  \photoplaceholder[3.4cm]{ChipWhisperer glitcher / crowbar injection rig}
-  \caption{Glitcher (photo to be added).}
-  \label{fig:setup-glitcher}
 \end{subfigure}
-\caption{Representative equipment in the PIs' fault-injection testbeds, maintained independently at both Northeastern and UCCS: (\subref{fig:setup-dut}) an embedded device under test, a Microchip ATmega328P Xplained board mounted on an optical bench for precise probe positioning; (\subref{fig:setup-rsa}) a Tektronix RSA607A real-time spectrum analyzer; and (\subref{fig:setup-glitcher}) \TODO{the ChipWhisperer glitcher / crowbar injection rig (photo to be added)}.}
+\caption{Representative equipment in the PIs' fault-injection testbeds, maintained independently at both Northeastern and UCCS: (\subref{fig:setup-glitcher}) \TODO{the ChipWhisperer glitcher / crowbar injection rig (photo to be added)}; (\subref{fig:setup-dut}) an embedded device under test, a Microchip ATmega328P Xplained board mounted on an optical bench for precise probe positioning; and (\subref{fig:setup-rsa}) a Tektronix RSA607A real-time spectrum analyzer.}
 \label{fig:setup}
 \end{figure}
 
 \subsection{A Motivating Example: Compiler Optimization Reshapes the Attack Surface}
 \label{sec:motivating}
 
-A central observation of this proposal is that the susceptibility of a security check to glitching is not a property of the source code alone, but of the machine code the compiler emits for it.
+\textbf{We observe that the susceptibility of a security check to glitching is not a property of the source code alone; it is a property of the machine code the compiler emits.}
 Consider the bounded-output routine \texttt{write\_bytes} in Figure~\ref{fig:motivating}(a), a representative pattern found across embedded firmware: a length-bounded loop that emits exactly \texttt{len} bytes from a buffer and periodically awaits an acknowledgment.
 The same shape, ``iterate up to a length bound while transmitting or computing,'' underlies firmware-image transmission, secure-boot manifest emission, and bounded buffer copies, so the safety property ``no more than \texttt{len} bytes leave the device'' is security-critical.
-Compiled by \texttt{arm-none-eabi-gcc} from identical source at two standard optimization levels (\texttt{-Os} for size and \texttt{-O2} for speed), the same function yields qualitatively different machine code with dramatically different exposure to a single-instruction skip.
+Compiled by \texttt{arm-none-eabi-gcc} at two standard optimization levels (\texttt{-Os} for size and \texttt{-O2} for speed), the same source yields different machine code and very different exposure to a single-instruction skip.
 
 \begin{figure}[t]
 \centering
 \begin{minipage}[t]{\linewidth}
 \centering{\scriptsize\textbf{(a) C source of \texttt{write\_bytes}.} Identical source is fed to \texttt{arm-none-eabi-gcc} at the two optimization levels shown below.}
-\begin{lstlisting}[language=C, basicstyle=\footnotesize\ttfamily, numbers=left, numberstyle=\tiny, frame=single, framesep=2pt]
+\begin{lstlisting}[language=C, basicstyle=\scriptsize\ttfamily, numbers=left, numberstyle=\tiny, frame=single, framesep=2pt]
 int write_bytes(const void *buf, uint16_t len, bool ack) {
     for (int i = 0; i < len; i++) {
         if (i % 256 == 0 && i != 0) {           // expect an ACK every 256 bytes
@@ -126,11 +127,10 @@ exit:
 \label{fig:motivating}
 \end{figure}
 
-With the two compiled variants placed side by side, the contrast is stark.
-At \texttt{-Os} (Figure~\ref{fig:motivating}(b)), the loop terminates via a greater-than test against the length bound; a single skip near the boundary at most lets one extra byte through before the next iteration's comparison succeeds and the loop exits, so attaining an $m$-byte overread requires $m$ independent successful skips and the attack probability behaves as $P_{\text{attack}}\!\approx\! p^m$.
+At \texttt{-Os} (Figure~\ref{fig:motivating}(b)), the loop terminates via a greater-than test against the length bound; a single skip near the boundary at most lets one extra byte through before the next iteration's comparison succeeds and the loop exits, so an $m$-byte overread requires $m$ independent successful skips and the attack probability behaves as $P_{\text{attack}}\!\approx\! p^m$.
 At \texttt{-O2} (Figure~\ref{fig:motivating}(c)), the same source becomes a body-first loop that terminates only on \emph{equality} of the index and the bound; if the attacker skips the comparison at the unique iteration where index equals bound, every subsequent comparison fails because the index runs past the bound, and the loop continues until external resources are exhausted, yielding an unbounded overread from a single fault with $P_{\text{attack}}\!\approx\! p$.
-The exploitable surface collapses from ``each successful skip costs one extra byte'' to ``one successful skip costs every remaining byte,'' so the same source becomes drastically more glitchable simply because the developer asked the compiler to optimize for speed rather than size.
-We have empirically confirmed this asymmetry on a Cortex-M4 target with ChipWhisperer voltage glitching across 100{,}000-trial campaigns~\TODO{cite the in-prep compiler-glitch paper}, the experimental backbone of the PI's preliminary work that this proposal builds on.
+The exploitable surface goes from ``each successful skip costs one extra byte'' to ``one successful skip costs every remaining byte''; the same source becomes much easier to glitch because the developer asked the compiler to optimize for speed rather than size.
+We confirmed this asymmetry on a Cortex-M4 target with ChipWhisperer voltage glitching across 100{,}000-trial campaigns~\TODO{cite the in-prep compiler-glitch paper}; this is the PIs' preliminary work that this proposal builds on.
 The example motivates Thrust~1, which characterizes and quantifies how compiler transformations like these reshape the glitching attack surface along two axes, the size of the exploitable schedule $|\sigma|$ and the magnitude of the resulting violation, and it foreshadows Thrust~3, where we turn the same compiler into the place to reduce that surface.
 
 \section{System and Threat Models}
@@ -142,7 +142,7 @@ The assets to be protected are the integrity of these control-flow decisions and
 We assume the underlying hardware behaves correctly in the absence of an induced fault; the compiler and the hardening it applies (Thrust~3) are part of the trusted computing base.
 
 \noindent\textbf{Threat model.}
-The adversary has physical or close-proximity access to the target and can mount \emph{power (voltage) glitching} (see the scope discussion above): by briefly perturbing the supply voltage, the attacker induces transient faults that we model as \emph{instruction skip}, \emph{instruction corruption}, and \emph{data corruption} affecting a bounded number of instructions/cycles per injection \TODO{state the precise fault model adopted, defined formally in Thrust~2}.
+The adversary has physical or close-proximity access to the target and can mount \emph{power (voltage) glitching} (see the scope discussion above): by briefly perturbing the supply voltage, the attacker induces transient faults that we model as \emph{instruction skip}, \emph{instruction corruption}, and \emph{data corruption} affecting a bounded number of instructions/cycles per injection, consistent with fault models established by prior empirical and micro-architectural studies~\cite{moro2013electromagnetic, dutertre2021experimental, trouchkine2021electromagnetic, alshaer2024cross} \TODO{state the precise bounded form (e.g., $k$-skip) adopted; defined formally in Thrust~2}.
 The attacker can repeat injections and tune their timing/parameters across many attempts, and observes the device's externally visible behavior to confirm success.
 The adversary's goal is to subvert a security-critical decision, for example to skip an authentication or secure-boot check, force an unintended branch, or corrupt data to leak or alter secrets.
 \noindent\textbf{Out of scope.}

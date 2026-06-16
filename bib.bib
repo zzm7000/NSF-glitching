@@ -67,6 +67,110 @@
   year={2019}
 }
 
+% --- Clock-glitching (historical vector; on-chip generators / PLL-aware techniques needed on modern devices) ---
+@inproceedings{selmke2019peak,
+  title={Peak Clock: Fault Injection into {PLL}-Based Systems via Clock Manipulation},
+  author={Selmke, Bodo and Hauschild, Florian and Obermaier, Johannes},
+  booktitle={Proceedings of the 3rd ACM Workshop on Attacks and Solutions in Hardware Security Workshop (ASHES)},
+  year={2019}
+}
+
+@inproceedings{balasch2011depth,
+  title={An In-Depth and Black-Box Characterization of the Effects of Clock Glitches on 8-Bit {MCUs}},
+  author={Balasch, Josep and Gierlichs, Benedikt and Verbauwhede, Ingrid},
+  booktitle={Workshop on Fault Diagnosis and Tolerance in Cryptography (FDTC)},
+  pages={105--114},
+  year={2011},
+  organization={IEEE}
+}
+
+% --- Recent voltage-glitching attacks on deployed embedded targets ---
+@inproceedings{sass2023multi,
+  title={Oops..! {I} Glitched It Again! How to Multi-Glitch the Glitching-Protections on {ARM} {TrustZone-M}},
+  author={Sa{\ss}, Xhani Marvin and Mitev, Richard and Sadeghi, Ahmad-Reza},
+  booktitle={32nd USENIX Security Symposium (USENIX Security 23)},
+  year={2023}
+}
+
+@article{ruminot2023novel,
+  title={A Novel Approach of a Low-Cost Voltage Fault Injection Method for Resource-Constrained {IoT} Devices: Design and Analysis},
+  author={Ruminot, Nicol{\'a}s and Estevez, Claudio and Montejo-S{\'a}nchez, Samuel},
+  journal={Sensors},
+  year={2023},
+  publisher={MDPI}
+}
+
+@misc{timmers2016bypassing,
+  title={{Bypassing Secure Boot using Fault Injection}},
+  author={Timmers, Niek and Spruyt, Albert},
+  howpublished={Black Hat Europe. \url{https://www.blackhat.com/docs/eu-16/materials/eu-16-Timmers-Bypassing-Secure-Boot-Using-Fault-Injection.pdf}},
+  year={2016}
+}
+
+@inproceedings{timmers2016controlling,
+  title={Controlling {PC} on {ARM} using Fault Injection},
+  author={Timmers, Niek and Spruyt, Albert and Witteman, Marc},
+  booktitle={Workshop on Fault Diagnosis and Tolerance in Cryptography (FDTC)},
+  year={2016},
+  organization={IEEE}
+}
+
+@inproceedings{barenghi2009low,
+  title={Low Voltage Fault Attacks on the {RSA} Cryptosystem},
+  author={Barenghi, Alessandro and Bertoni, Guido and Parrinello, Emanuele and Pelosi, Gerardo},
+  booktitle={Workshop on Fault Diagnosis and Tolerance in Cryptography (FDTC)},
+  pages={23--31},
+  year={2009},
+  organization={IEEE}
+}
+
+@inproceedings{carpi2014glitch,
+  title={Glitch It If You Can: Parameter Search Strategies for Successful Fault Injection},
+  author={Carpi, Rafael Boix and Picek, Stjepan and Batina, Lejla and Menarini, Federico and Jakobovic, Domagoj and Golub, Marin},
+  booktitle={Smart Card Research and Advanced Applications (CARDIS)},
+  year={2014},
+  organization={Springer}
+}
+
+@article{alshaer2024cross,
+  title={Cross-Layer Analysis of Clock Glitch Fault Injection While Fetching Variable-Length Instructions},
+  author={Alshaer, Ihab and Burghoorn, Gijs and Colombier, Brice and Deleuze, Christophe and Beroulle, Vincent and Maistri, Paolo},
+  journal={Journal of Cryptographic Engineering},
+  year={2024},
+  publisher={Springer}
+}
+
+% --- Fault models (EM / instruction-skip / micro-architectural) ---
+@inproceedings{moro2013electromagnetic,
+  title={Electromagnetic Fault Injection: Towards a Fault Model on a 32-bit Microcontroller},
+  author={Moro, Nicolas and Dehbaoui, Amine and Heydemann, Karine and Robisson, Bruno and Encrenaz, Emmanuelle},
+  booktitle={Workshop on Fault Diagnosis and Tolerance in Cryptography (FDTC)},
+  pages={77--88},
+  year={2013},
+  organization={IEEE}
+}
+
+@article{dutertre2021experimental,
+  title={Experimental Analysis of the Electromagnetic Instruction Skip Fault Model and Consequences for Software Countermeasures},
+  author={Dutertre, Jean-Max and Menu, Alexandre and Potin, Olivier and Rigaud, Jean-Baptiste and Danger, Jean-Luc},
+  journal={Microelectronics Reliability},
+  volume={121},
+  pages={114133},
+  year={2021},
+  publisher={Elsevier}
+}
+
+@article{trouchkine2021electromagnetic,
+  title={Electromagnetic Fault Injection against a Complex {CPU}, toward New Micro-Architectural Fault Models},
+  author={Trouchkine, Thomas and Bukasa, S{\'e}banjila Kevin and Escouteloup, Mathieu and Lashermes, Ronan and Bouffard, Guillaume},
+  journal={Journal of Cryptographic Engineering},
+  volume={11},
+  number={4},
+  pages={353--367},
+  year={2021},
+  publisher={Springer}
+}
+
 % --- Power/voltage glitching & ChipWhisperer (Background) ---
 @inproceedings{chipwhisperer,
   title={ChipWhisperer: An Open-Source Platform for Hardware Embedded Security Research},
@@ -111,4 +215,12 @@
   author={Yang, Zhaomo and Johannesmeyer, Brian and Olesen, Anders Trier and Lerner, Sorin and Levchenko, Kirill},
   booktitle={USENIX Security Symposium},
   year={2017}
+}
+
+@inproceedings{xu2023silent,
+  title={Silent Bugs Matter: A Study of Compiler-Introduced Security Bugs},
+  author={Xu, Jianhao and Lu, Kangjie and Du, Zhengjie and Ding, Zhu and Li, Linke and Wu, Qiushi and Payer, Mathias and Mao, Bing},
+  booktitle={32nd USENIX Security Symposium (USENIX Security 23)},
+  pages={3655--3672},
+  year={2023}
 }
