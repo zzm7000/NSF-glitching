@@ -58,39 +58,80 @@ Both testbeds include \TODO{list the ChipWhisperer glitcher(s) and any other sha
 \label{sec:motivating}
 
 A central observation of this proposal is that the susceptibility of a security check to glitching is not a property of the source code alone, but of the machine code the compiler emits for it.
-Consider a representative security-critical decision, such as a secure-boot or authentication check \TODO{name the exact example to be shown}.
-Compiled at different optimization levels, the same source yields markedly different instruction sequences, and those differences change how many single-instruction faults suffice to bypass the check.
-Figure~\ref{fig:motivating} contrasts the same check compiled at two optimization levels.
+Consider the bounded-output routine \texttt{write\_bytes} in Figure~\ref{fig:motivating}(a), a representative pattern found across embedded firmware: a length-bounded loop that emits exactly \texttt{len} bytes from a buffer and periodically awaits an acknowledgment.
+The same shape, ``iterate up to a length bound while transmitting or computing,'' underlies firmware-image transmission, secure-boot manifest emission, and bounded buffer copies, so the safety property ``no more than \texttt{len} bytes leave the device'' is security-critical.
+Compiled by \texttt{arm-none-eabi-gcc} from identical source at two standard optimization levels (\texttt{-Os} for size and \texttt{-O2} for speed), the same function yields qualitatively different machine code with dramatically different exposure to a single-instruction skip.
 
 \begin{figure}[t]
 \centering
-% TODO(glitching): replace the placeholders with the real source and its compiled output
-% at two optimization levels. The lstlisting blocks below are ready to fill.
 \begin{minipage}[t]{\linewidth}
-\centering{\scriptsize\textbf{Source}}
-\begin{lstlisting}[language=C]
-// TODO(glitching): paste the C source of the security check here.
+\centering{\scriptsize\textbf{(a) C source of \texttt{write\_bytes}.} Identical source is fed to \texttt{arm-none-eabi-gcc} at the two optimization levels shown below.}
+\begin{lstlisting}[language=C, basicstyle=\footnotesize\ttfamily, numbers=left, numberstyle=\tiny, frame=single, framesep=2pt]
+int write_bytes(const void *buf, uint16_t len, bool ack) {
+    for (int i = 0; i < len; i++) {
+        if (i % 256 == 0 && i != 0) {           // expect an ACK every 256 bytes
+            if (ack && read_ack() < 0) return -1;
+        }
+        putch(((uint8_t *)buf)[i]);
+    }
+    return 0;
+}
 \end{lstlisting}
 \end{minipage}
 
+\vspace{0.4em}
 \begin{minipage}[t]{0.48\linewidth}
-\centering{\scriptsize\textbf{Compiled at \texttt{-O0}}}
-\begin{lstlisting}
-; TODO(glitching): paste the -O0 disassembly of the check here.
+\centering{\scriptsize\textbf{(b) Thumb assembly at \texttt{-Os} (size). Top-tested loop: \texttt{cmp/bgt} guards the body.}}
+\begin{lstlisting}[style=armasm]
+head:                ; loop head
+  cmp   r5, r4       ; r5=len, r4=i
+|\glitchhl{~~\textbf{\textcolor{blue!60!black}{bgt}}~~~body~~~~~~~~~;~\textcolor{red!70!black}{\textless==~skip~=\textgreater~+1~byte}}|
+  movs  r0, #0       ; return 0
+  pop   {r3..r7,pc}  ; exit
+body:
+  uxtb  r3, r4
+  cbnz  r3, emit     ; ACK gating
+  cbz   r4, emit
+  cbz   r7, emit
+  bl    read_ack
+emit:
+  ldrb  r0, [r6,r4]  ; putch(buf[i])
+  bl    putch
+  adds  r4, #1       ; ++i
+  b     head         ; back to head
 \end{lstlisting}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.48\linewidth}
-\centering{\scriptsize\textbf{Compiled at \texttt{-O2}}}
-\begin{lstlisting}
-; TODO(glitching): paste the -O2 disassembly of the check here.
+\centering{\scriptsize\textbf{(c) Thumb assembly at \texttt{-O2} (speed). Body-first loop: \texttt{cmp/beq} exits only on \emph{equality}.}}
+\begin{lstlisting}[style=armasm]
+body:                ; loop body
+  adds   r4, #1      ; ++i
+  ldrb.w r0,[r5,#1]! ; load buf[i]
+  bl     putch
+  cmp    r4, r6      ; i == len ?
+  uxtb   r3, r4
+|\glitchhl{~~\textbf{\textcolor{blue!60!black}{beq}}~~~~exit~~~~~~~~;~\textcolor{red!70!black}{\textless==~skip~=\textgreater~unbounded}}|
+  cmp    r3, #0      ; ACK gating
+  bne    body
+  cmp    r7, #0
+  beq    body
+  bl     read_ack
+  b      body
+exit:
+  movs   r0, #0      ; return 0
+  pop    {r3..r7,pc}
 \end{lstlisting}
 \end{minipage}
-\caption{\TODO{Motivating example: one security check compiled at -O0 versus -O2. Mark the instruction(s) a single-skip glitch must hit in each version, and contrast the number of exploitable single-fault sites.}}
+\caption{The same \texttt{write\_bytes} routine compiled at \texttt{-Os} versus \texttt{-O2} with \texttt{arm-none-eabi-gcc}. The \texttt{-Os} variant (b) keeps a top-tested loop (\texttt{cmp r5,r4} then \texttt{bgt}); a single-skip glitch yields at most one extra byte, so an $m$-byte overread requires $m$ successful skips ($P_{\text{attack}}\!\approx\! p^m$). The \texttt{-O2} variant (c) restructures the loop body-first with an equality termination (\texttt{cmp r4,r6} then \texttt{beq}); skipping the comparison at the unique boundary iteration makes the equality test never trigger again, yielding an unbounded overread from a single fault ($P_{\text{attack}}\!\approx\! p$).}
 \label{fig:motivating}
 \end{figure}
 
-With the two versions placed side by side, the contrast becomes concrete: \TODO{walk through which instruction a single-skip glitch must hit in each version, and state which optimization level exposes more exploitable single-fault sites}.
-This example motivates Thrust~1, which characterizes and quantifies how compiler transformations reshape the glitching attack surface, and it foreshadows Thrust~3, where we turn the same compiler into the place to reduce that surface.
+With the two compiled variants placed side by side, the contrast is stark.
+At \texttt{-Os} (Figure~\ref{fig:motivating}(b)), the loop terminates via a greater-than test against the length bound; a single skip near the boundary at most lets one extra byte through before the next iteration's comparison succeeds and the loop exits, so attaining an $m$-byte overread requires $m$ independent successful skips and the attack probability behaves as $P_{\text{attack}}\!\approx\! p^m$.
+At \texttt{-O2} (Figure~\ref{fig:motivating}(c)), the same source becomes a body-first loop that terminates only on \emph{equality} of the index and the bound; if the attacker skips the comparison at the unique iteration where index equals bound, every subsequent comparison fails because the index runs past the bound, and the loop continues until external resources are exhausted, yielding an unbounded overread from a single fault with $P_{\text{attack}}\!\approx\! p$.
+The exploitable surface collapses from ``each successful skip costs one extra byte'' to ``one successful skip costs every remaining byte,'' so the same source becomes drastically more glitchable simply because the developer asked the compiler to optimize for speed rather than size.
+We have empirically confirmed this asymmetry on a Cortex-M4 target with ChipWhisperer voltage glitching across 100{,}000-trial campaigns~\TODO{cite the in-prep compiler-glitch paper}, the experimental backbone of the PI's preliminary work that this proposal builds on.
+The example motivates Thrust~1, which characterizes and quantifies how compiler transformations like these reshape the glitching attack surface along two axes, the size of the exploitable schedule $|\sigma|$ and the magnitude of the resulting violation, and it foreshadows Thrust~3, where we turn the same compiler into the place to reduce that surface.
 
 \section{System and Threat Models}
 

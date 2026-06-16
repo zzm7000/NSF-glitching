@@ -190,6 +190,22 @@
 
 \lstset{style=mystyle}
 
+\lstdefinestyle{armasm}{
+  basicstyle=\scriptsize\ttfamily,
+  frame=single,
+  framesep=2pt,
+  numbers=none,
+  tabsize=2,
+  columns=fullflexible,
+  literate={},
+  keywords={cmp,bgt,beq,bne,bl,b,movs,mov,adds,uxtb,cbnz,cbz,ldrb,strb,pop,push,ldr},
+  keywordstyle={\bfseries\color{blue!60!black}},
+  commentstyle={\itshape\color{gray!50!black}},
+  morecomment=[l]{;},
+  escapeinside={|}{|},
+}
+\newcommand{\glitchhl}[1]{{\setlength{\fboxsep}{0pt}\colorbox{yellow!50}{\strut\scriptsize\ttfamily#1}}}
+
 \graphicspath{{./figs/}}
 
 \begin{document}
