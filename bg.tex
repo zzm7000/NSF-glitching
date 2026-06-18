@@ -28,31 +28,27 @@ Published attacks include skipping iterations of counting loops, bypassing passw
 Both PIs maintain fault-injection laboratories at their home institutions (Northeastern for PI Zhao; the University of Colorado Colorado Springs for PI Tan), giving the project glitching capability at two sites and letting the PIs cross-validate findings on separate hardware.
 The testbeds (Figure~\ref{fig:setup}) cover what a glitching campaign needs: embedded targets such as the Microchip ATmega328P Xplained on an optical bench for precise probe positioning, a Tektronix RSA607A real-time spectrum analyzer for power- and EM-side characterization, and ChipWhisperer glitchers for synchronized crowbar voltage perturbation.
 
-% Photos are portrait (AR ~0.75); fixing a common height keeps all three panels the
-% same size, and [t] alignment keeps a longer caption from shifting the images.
 \begin{figure}[t]
 \centering
 \begin{subfigure}[t]{0.32\textwidth}
   \centering
-  \setlength{\phheight}{4.5cm}% match the photo height; auto-resets at end of this subfigure
-  % \photoplaceholder[3.4cm]{ChipWhisperer glitcher / crowbar injection rig}
-  \includegraphics[height=3.4cm]{chipwhisper.jpeg}
-  \caption{Glitcher (photo to be added).}
+  \includegraphics[width=\linewidth]{cw_c.jpg}
+  \caption{ChipWhisperer Husky glitcher / crowbar injection rig.}
   \label{fig:setup-glitcher}
 \end{subfigure}\hfill
 \begin{subfigure}[t]{0.32\textwidth}
   \centering
-  \includegraphics[height=4.5cm]{PXL_20251205_153425399.jpg}
+  \includegraphics[width=\linewidth]{atmega_c.jpg}
   \caption{Embedded device under test (Microchip ATmega328P Xplained) on an optical bench.}
   \label{fig:setup-dut}
 \end{subfigure}\hfill
 \begin{subfigure}[t]{0.32\textwidth}
   \centering
-  \includegraphics[height=4.5cm]{PXL_20251205_154238638.jpg}
+  \includegraphics[width=\linewidth]{rsa_c.jpg}
   \caption{Tektronix RSA607A real-time spectrum analyzer.}
   \label{fig:setup-rsa}
 \end{subfigure}
-\caption{Representative equipment in the PIs' fault-injection testbeds, maintained independently at both Northeastern and UCCS: (\subref{fig:setup-glitcher}) \TODO{the ChipWhisperer glitcher / crowbar injection rig (photo to be added)}; (\subref{fig:setup-dut}) an embedded device under test, a Microchip ATmega328P Xplained board mounted on an optical bench for precise probe positioning; and (\subref{fig:setup-rsa}) a Tektronix RSA607A real-time spectrum analyzer.}
+\caption{Representative equipment in the PIs' fault-injection testbeds, maintained independently at both Northeastern and UCCS: (\subref{fig:setup-glitcher}) the ChipWhisperer Husky glitcher connected via flat ribbon cable to a CW313 target shim board, used for synchronized crowbar voltage injection; (\subref{fig:setup-dut}) an embedded device under test, a Microchip ATmega328P Xplained board mounted on an optical bench for precise probe positioning; and (\subref{fig:setup-rsa}) a Tektronix RSA607A real-time spectrum analyzer.}
 \label{fig:setup}
 \end{figure}
 
