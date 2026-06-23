@@ -1,11 +1,22 @@
 % !TEX root = ProjectDescription.tex
 \section{Overview and Objectives}
 
-% TODO(glitching): Motivate the problem.
-%  - What systems are at risk (embedded/MCU/IoT/secure boot/TEE)?
-%  - What is fault injection / glitching (voltage, clock, EM, laser)?
-%  - Why is it dangerous and underexplored relative to software attacks?
-%  - State the overarching scientific goal of this proposal in one sentence.
+Embedded systems are ubiquitous computing devices deployed across critical infrastructure, consumer electronics, medical devices, industrial control systems, and IoT applications.
+These systems range from microcontroller units (MCUs) that power sensors and edge devices to more capable embedded processors in automotive systems, smart home devices, and industrial controllers.
+They are essential to everyday life, with billions of embedded devices deployed globally and projected to grow to trillions by 2035~\cite{Philip2021route}.
+While the benefits of these systems are unparalleled, unfortunately, they are susceptible to cyberattacks that are occurring at unprecedented levels, and which often have severe consequences ranging from loss of life~\cite{FDA2019} to homeland security breaches~\cite{stellios2018survey}.
+To ensure our embedded and IoT infrastructure is built on a trustworthy and secure foundation, the ``IoT Cybersecurity Improvement Act of 2019" (S.734 in the Senate)~\cite{s734} highlights the need for urgent actions on embedded systems security.
+
+In response to these persistent software vulnerabilities, the cybersecurity community and government agencies have pursued multiple complementary strategies to mitigate memory corruption attacks on embedded systems.
+One major effort pursues defensive techniques that continue to use C and C++ while deploying compiler-based and runtime mitigations—including stack canaries, address space layout randomization (ASLR), data execution prevention (DEP), control-flow integrity (CFI), and software fault isolation (SFI)—to reduce the exploitability of memory corruption bugs without requiring language rewrites.
+A parallel and increasingly strategic effort involves transitioning to memory-safe programming languages: the White House and federal agencies have invested significant effort in promoting memory-safe languages as a defense against memory corruption vulnerabilities~\cite{whitehouse2024memory}, with major initiatives including DARPA's memory-safety focused research programs~\cite{darpa2024ssith} underscoring the importance of moving embedded system development away from unsafe languages like C and toward memory-safe alternatives such as Rust.
+Both approaches have made measurable progress: as we showed in our CCS 2025 paper analyzing MITRE's Embedded Capture-The-Flag (eCTF) competitions~\cite{ma2025ectf}, both the deployment of defensive techniques in C/C++ and the adoption of Rust are increasing, with memory-corruption-based vulnerabilities declining significantly across competition rounds.
+
+Yet both memory-safe languages and hardened C/C++ share a fundamental limitation: they only protect the software layer.
+Embedded systems operate under constraints that expose them to a different class of attacks altogether: they need hardware access, run on tight resource budgets, and execute on processors with minimal built-in security.
+When software defenses mature, attackers simply shift their approach—they move to hardware-level attacks that exist below the software layer entirely.
+In recent eCTF competitions (as documented in our CCS 2025 analysis~\cite{ma2025ectf}), we're seeing exactly this play out: multiple teams are successfully using fault injection to compromise embedded systems, whether those systems are running hardened C/C++ code or Rust.
+This means neither approach solves the problem—fault injection is orthogonal to memory safety, and it's a threat that remains largely unaddressed in embedded systems security research.
 
 \subsection{Proposed Research}
 
